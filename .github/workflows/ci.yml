@@ -26,7 +26,7 @@ jobs:
       - name: Install obsidian dependency
         run: |
           mv "$GITHUB_WORKSPACE/obsidian-pkg" "$RUNNER_TEMP/obsidian-pkg"
-          raco pkg install --auto --link "$RUNNER_TEMP/obsidian-pkg"
+          raco pkg install --auto --name obsidian --link "$RUNNER_TEMP/obsidian-pkg"
       - name: Install postly
         run: raco pkg install --auto --link "$GITHUB_WORKSPACE"
       - name: Setup gate (dependency check)
