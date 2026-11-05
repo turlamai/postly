@@ -1,7 +1,7 @@
 #lang info
 
 (define collection "postly")
-(define version "0.1.0")
+(define version "0.1")
 (define pkg-desc
   "A minimal static blog engine in Racket: Obsidian Markdown in, a plain HTML site out. Yinwang-style restraint, zero runtime JavaScript.")
 (define license '(MIT))
