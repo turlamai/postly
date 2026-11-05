@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: turlamai/obsidian
-          path: ../obsidian-pkg
+          path: obsidian-pkg
       - uses: Bogdanp/setup-racket@v1.11
         with:
           architecture: x64
@@ -24,7 +24,9 @@ jobs:
           variant: CS
           version: ${{ matrix.racket-version }}
       - name: Install obsidian dependency
-        run: raco pkg install --auto --link "$GITHUB_WORKSPACE/../obsidian-pkg"
+        run: |
+          mv "$GITHUB_WORKSPACE/obsidian-pkg" "$RUNNER_TEMP/obsidian-pkg"
+          raco pkg install --auto --link "$RUNNER_TEMP/obsidian-pkg"
       - name: Install postly
         run: raco pkg install --auto --link "$GITHUB_WORKSPACE"
       - name: Setup gate (dependency check)
