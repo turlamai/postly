@@ -1,5 +1,7 @@
 #lang info
 
+(define name "postly")
+
 (define collection "postly")
 (define version "0.1")
 (define pkg-desc
