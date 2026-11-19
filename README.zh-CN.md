@@ -1,7 +1,5 @@
 # postly
 
-**支持：**[问题与反馈](https://github.com/turlamai/postly/issues) · [当前交付策略](https://github.com/turlamai/turlamai.github.io/blob/master/PORTFOLIO.zh-CN.md)
-
 [English](README.md) · 简体中文
 
 Racket 写的极简静态博客引擎：输入 Obsidian Markdown，输出纯 HTML 站点。
