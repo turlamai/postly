@@ -1,7 +1,5 @@
 # postly
 
-**Support:** [Issues & feedback](https://github.com/turlamai/postly/issues) · [Development policy](https://github.com/turlamai/turlamai.github.io/blob/master/PORTFOLIO.md)
-
 [English](README.md) · [简体中文](README.zh-CN.md)
 
 A minimal static blog engine in Racket: Obsidian Markdown in, a plain HTML
