@@ -87,3 +87,27 @@
     (file->string (build-path out3 "blog" "2026" "11" "05" "hello-postly"
                               "index.html"))
     "href=\"/p/another-post\"")))
+
+;; Public article assets are copied recursively; private files are not.
+(define asset-source (make-temporary-file "postly-assets-src~a" 'directory))
+(define asset-output (make-temporary-file "postly-assets-out~a" 'directory))
+(dynamic-wind
+ void
+ (lambda ()
+   (make-directory* (build-path asset-source "assets" "article"))
+   (define payload (bytes 0 1 127 255))
+   (call-with-output-file (build-path asset-source "assets" "article" "image.png")
+     (lambda (p) (write-bytes payload p)))
+   (call-with-output-file (build-path asset-source "private.txt")
+     (lambda (p) (display "private" p)))
+   (build! asset-source asset-output)
+   (check-equal? (file->bytes (build-path asset-output "assets" "article" "image.png"))
+                 payload)
+   (check-false (file-exists? (build-path asset-output "private.txt")))
+   (unless (eq? (system-type 'os) 'windows)
+     (make-file-or-directory-link (build-path asset-source "private.txt")
+                                  (build-path asset-source "assets" "private-link"))
+     (check-exn #rx"symbolic link" (lambda () (build! asset-source asset-output)))))
+ (lambda ()
+   (delete-directory/files asset-source)
+   (delete-directory/files asset-output)))
