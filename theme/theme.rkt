@@ -96,6 +96,14 @@
                        (p () "© " ,(site-title st)
                           " · " (a ((href ,(site-path st "/feed.xml"))) "RSS"))))))
 
+;; Rebase only the explicit public asset namespace in renderer-generated
+;; double-quoted attributes. Leave external URLs and escaped code untouched.
+(define (rebase-assets st html)
+  (regexp-replace* #px"(<(?:img|a)\\b[^>]*?\\s(?:src|href)=\")(/assets/[^\"<>]*)"
+                   html
+                   (lambda (_ before path)
+                     (string-append before (site-path st path)))))
+
 ;; post-page : site? doc? -> (listof any/c)
 (define (post-page st d)
   (define t (doc-title d))
@@ -107,7 +115,7 @@
                       (p ((class "post-date"))
                          ,(string-join (doc-date d) "-"))
                       (h1 ((class "post-title")) ,(or t "（无标题）")))
-              (raw ,(doc-html d))
+              (raw ,(rebase-assets st (doc-html d)))
               ,@(if (null? ts)
                     '()
                     `((footer ((class "post-tags"))
@@ -151,4 +159,4 @@
    st page-title
    `((article ()
               (h1 () ,page-title)
-              (raw ,(string-append body-html "\n"))))))
+              (raw ,(string-append (rebase-assets st body-html) "\n"))))))
