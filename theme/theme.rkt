@@ -81,20 +81,28 @@
                       (content "width=device-width, initial-scale=1")))
                (meta ((name "color-scheme") (content "light dark")))
                (title () ,t)
-               (link ((rel "stylesheet") (href "/static/style.css")))
+               (link ((rel "stylesheet") (href ,(site-path st "/static/style.css"))))
                (link ((rel "alternate") (type "application/rss+xml")
-                      (title ,(site-title st)) (href "/feed.xml"))))
+                      (title ,(site-title st)) (href ,(site-path st "/feed.xml")))))
          (body ()
                (header ((class "site-header"))
                        (nav ((class "site-nav"))
-                            (a ((class "site-title") (href "/"))
+                            (a ((class "site-title") (href ,(site-path st "/")))
                                ,(site-title st))
                             ,@(for/list ((entry (in-list (site-nav st))))
-                                `(a ((href ,(cdr entry))) ,(car entry)))))
+                                `(a ((href ,(site-path st (cdr entry)))) ,(car entry)))))
                (main () ,@content)
                (footer ((class "site-footer"))
                        (p () "© " ,(site-title st)
-                          " · " (a ((href "/feed.xml")) "RSS"))))))
+                          " · " (a ((href ,(site-path st "/feed.xml"))) "RSS"))))))
+
+;; Rebase only the explicit public asset namespace in renderer-generated
+;; double-quoted attributes. Leave external URLs and escaped code untouched.
+(define (rebase-assets st html)
+  (regexp-replace* #px"(<(?:img|a)\\b[^>]*?\\s(?:src|href)=\")(/assets/[^\"<>]*)"
+                   html
+                   (lambda (_ before path)
+                     (string-append before (site-path st path)))))
 
 ;; post-page : site? doc? -> (listof any/c)
 (define (post-page st d)
@@ -107,7 +115,7 @@
                       (p ((class "post-date"))
                          ,(string-join (doc-date d) "-"))
                       (h1 ((class "post-title")) ,(or t "（无标题）")))
-              (raw ,(doc-html d))
+              (raw ,(rebase-assets st (doc-html d)))
               ,@(if (null? ts)
                     '()
                     `((footer ((class "post-tags"))
@@ -126,10 +134,10 @@
                       `(li ()
                            (span ((class "post-date"))
                                  ,(string-join (doc-date d) "-"))
-                           (a ((href ,(post-permalink (doc-date d) (doc-slug d))))
+                           (a ((href ,(site-path st (post-permalink (doc-date d) (doc-slug d)))))
                               ,(or (doc-title d) (doc-slug d))))))
               ,@(if (> (length posts) n)
-                    `((p () (a ((href "/blog/")) "全部文章 →")))
+                    `((p () (a ((href ,(site-path st "/blog/"))) "全部文章 →")))
                     '())))))
 
 ;; blog-index-page : site? (listof doc?) -> (listof any/c)
@@ -141,7 +149,7 @@
          ,@(for/list ((d (in-list posts)))
              `(li ()
                   (span ((class "post-date")) ,(string-join (doc-date d) "-"))
-                  (a ((href ,(post-permalink (doc-date d) (doc-slug d))))
+                  (a ((href ,(site-path st (post-permalink (doc-date d) (doc-slug d)))))
                      ,(or (doc-title d) (doc-slug d)))))))))
 
 ;; plain-page : site? string? string? -> (listof any/c)
@@ -151,4 +159,4 @@
    st page-title
    `((article ()
               (h1 () ,page-title)
-              (raw ,(string-append body-html "\n"))))))
+              (raw ,(string-append (rebase-assets st body-html) "\n"))))))

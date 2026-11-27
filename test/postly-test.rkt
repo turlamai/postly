@@ -87,3 +87,64 @@
     (file->string (build-path out3 "blog" "2026" "11" "05" "hello-postly"
                               "index.html"))
     "href=\"/p/another-post\"")))
+
+;; Public article assets are copied recursively; private files are not.
+(define asset-source (make-temporary-file "postly-assets-src~a" 'directory))
+(define asset-output (make-temporary-file "postly-assets-out~a" 'directory))
+(dynamic-wind
+ void
+ (lambda ()
+   (make-directory* (build-path asset-source "assets" "article"))
+   (define payload (bytes 0 1 127 255))
+   (call-with-output-file (build-path asset-source "assets" "article" "image.png")
+     (lambda (p) (write-bytes payload p)))
+   (call-with-output-file (build-path asset-source "private.txt")
+     (lambda (p) (display "private" p)))
+   (build! asset-source asset-output)
+   (check-equal? (file->bytes (build-path asset-output "assets" "article" "image.png"))
+                 payload)
+   (check-false (file-exists? (build-path asset-output "private.txt")))
+   (unless (eq? (system-type 'os) 'windows)
+     (make-file-or-directory-link (build-path asset-source "private.txt")
+                                  (build-path asset-source "assets" "private-link"))
+     (check-exn #rx"symbolic link" (lambda () (build! asset-source asset-output)))))
+ (lambda ()
+   (delete-directory/files asset-source)
+   (delete-directory/files asset-output)))
+
+
+;; Deployment under an existing site's /articles/ prefix.
+(define prefix-source (make-temporary-file "postly-prefix-src~a" 'directory))
+(define prefix-output (make-temporary-file "postly-prefix-out~a" 'directory))
+(dynamic-wind
+ void
+ (lambda ()
+   (make-directory* (build-path prefix-source "blog"))
+   (make-directory* (build-path prefix-source "assets"))
+   (call-with-output-file (build-path prefix-source "assets" "image.png")
+     (lambda (p) (write-bytes #"sample" p)))
+   (call-with-output-file (build-path prefix-source "blog" "2026-11-27-example.md")
+     (lambda (p)
+       (display "# Example\n\n![](/assets/image.png)\n\n[download](/assets/image.png)\n\n![external](https://example.org/image.png)\n\n```html\n<img src=\"/assets/code.png\">\n```\n" p)))
+   (define st (site "Articles" "https://jrtx.site/articles"
+                    '(("Blog" . "/blog/") ("Main site" . "https://jrtx.site/"))))
+   (build! prefix-source prefix-output st)
+   (define page (file->string (build-path prefix-output "blog" "2026" "11" "27" "example" "index.html")))
+   (define index (file->string (build-path prefix-output "index.html")))
+   (for ((expected (in-list '("src=\"/articles/assets/image.png\""
+                              "href=\"/articles/assets/image.png\""
+                              "href=\"/articles/static/style.css\""
+                              "href=\"/articles/feed.xml\""
+                              "href=\"https://jrtx.site/\""
+                              "https://example.org/image.png"
+                              "/assets/code.png"))))
+     (check-true (string-contains? page expected) expected))
+   (check-false (string-contains? page "/articles/assets/code.png"))
+   (check-true (string-contains? index "/articles/blog/2026/11/27/example/"))
+   (check-true (file-exists? (build-path prefix-output "assets" "image.png")))
+   (for ((name (in-list '("feed.xml" "sitemap.xml"))))
+     (check-true (string-contains? (file->string (build-path prefix-output name))
+                                  "https://jrtx.site/articles/blog/2026/11/27/example/"))))
+ (lambda ()
+   (delete-directory/files prefix-source)
+   (delete-directory/files prefix-output)))

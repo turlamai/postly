@@ -12,7 +12,8 @@
 (provide (struct-out site)
          default-site
          site-args->site
-         today-ymd)
+         today-ymd
+         site-path)
 
 ;; site : string? string? (listof (cons/c string? string?)) -> site?
 ;; title = site name shown in the header; base-url = canonical origin
@@ -41,3 +42,12 @@
   (list (~a (date-year d))
         (~r (date-month d) #:min-width 2 #:pad-string "0")
         (~r (date-day d) #:min-width 2 #:pad-string "0")))
+
+;; base-url may include a deployment prefix, e.g. https://example.com/articles.
+;; Keep the site struct and existing standalone configuration compatible.
+(define (site-path st path)
+  (define m (regexp-match #px"^https?://[^/]+(/.*)?$" (site-base-url st)))
+  (define prefix (if (and m (cadr m)) (string-trim (cadr m) "/" #:left? #f) ""))
+  (if (and (string-prefix? path "/") (not (string-prefix? path "//")))
+      (string-append prefix path)
+      path))

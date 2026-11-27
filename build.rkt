@@ -51,6 +51,21 @@
               (string->path (substring (string-trim url-path "/") 0))
               "index.html"))
 
+;; Copy only explicitly staged public assets. Never follow symbolic links.
+(define (copy-public-assets! src dst)
+  (when (link-exists? src)
+    (error 'postly "symbolic link in public assets: ~a" src))
+  (when (link-exists? dst)
+    (error 'postly "symbolic link in output assets: ~a" dst))
+  (cond
+    ((directory-exists? src)
+     (make-directory* dst)
+     (for ((name (in-list (directory-list src))))
+       (copy-public-assets! (build-path src name) (build-path dst name))))
+    ((file-exists? src)
+     (copy-file src dst 'replace))
+    (else (error 'postly "unsupported asset: ~a" src))))
+
 ;; build! : path? path? [site?] -> void?
 (define (build! content-dir out-dir (st #f))
   (define site-cfg (or st (load-site content-dir)))
@@ -95,6 +110,11 @@
                (string->bytes/utf-8 (rss-xml site-cfg posts)))
   (write-file* (build-path out-dir "sitemap.xml")
                (string->bytes/utf-8 (sitemap-xml site-cfg posts)))
+
+  ;; Explicitly staged article assets use root-relative /assets/ URLs.
+  (define assets-dir (build-path content-dir "assets"))
+  (when (or (directory-exists? assets-dir) (link-exists? assets-dir))
+    (copy-public-assets! assets-dir (build-path out-dir "assets")))
 
   ;; theme assets
   (define static-dir theme-static-dir)
