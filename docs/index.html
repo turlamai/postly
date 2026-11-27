@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN" data-kit-id="postly"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Postly — Markdown publishing</title><meta name="description" content="A free, open-source static blog engine and Obsidian publishing workflow."><link rel="canonical" href="https://postly.jrtx.site/"><script>(function(){var t;try{t=localStorage.getItem('postly-theme')}catch(e){}document.documentElement.dataset.theme=t==='dark'||t==='light'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'})()</script><link rel="stylesheet" href="family.css"><script defer src="family.js"></script></head><body>
+<header class="kit-nav">
+        <div class="kit-container kit-nav-inner">
+            <a class="kit-brand" href="/">
+                <svg class="kit-brand-mark" viewBox="0 0 24 24" fill="var(--kit-accent)"><rect width="24" height="24" rx="6" /></svg>
+                <span data-i18n="nav.brand">Postly</span>
+            </a>
+            <nav class="kit-nav-links">
+                
+                
+                <a href="#start" data-i18n="nav.start">开始使用</a>
+                <a href="https://github.com/turlamai/postly" >GitHub</a>
+            </nav>
+            <div class="kit-nav-actions">
+                <div class="kit-lang">
+                    <button class="kit-lang-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.2" /><path d="M1.8 8h12.4M8 1.8c-4.6 4-4.6 8.4 0 12.4 4.6-4 4.6-8.4 0-12.4z" /></svg>
+                        <span class="kit-lang-current">简体中文</span>
+                    </button>
+                    <ul class="kit-lang-menu">
+                        <li><button type="button" data-kit-lang="zh">简体中文</button></li>
+                        <li><button type="button" data-kit-lang="en">English</button></li>
+                    </ul>
+                </div>
+                <button class="kit-icon-btn kit-theme-toggle" type="button" aria-pressed="false" aria-label="Theme">
+                    <svg class="kit-icon-sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="4" /><path d="M10 1.5v2M10 16.5v2M1.5 10h2M16.5 10h2M4 4l1.4 1.4M14.6 14.6L16 16M16 4l-1.4 1.4M5.4 14.6L4 16" /></svg>
+                    <svg class="kit-icon-moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7z" /></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+<main><section class="kit-hero"><div class="kit-container"><h1 data-i18n="hero.h1">本地写作，发布到自己的网站。</h1><p class="kit-lead" data-i18n="hero.lead">将 Markdown 或 Obsidian 笔记构建为静态博客。保留原始文件，主动选择公开内容。</p><div class="kit-btn-row"><a class="kit-btn kit-btn--primary" href="#start" data-i18n="nav.start">开始使用</a><a class="kit-btn kit-btn--secondary" href="https://github.com/turlamai/postly">GitHub</a></div><p class="kit-hero-meta" data-i18n="hero.badge">免费开源 · 开发预览</p></div></section>
+<section class="kit-section" id="start"><div class="kit-container"><h2 class="kit-h2" data-i18n="start.title">选择你的发布方式</h2><p class="kit-lead" data-i18n="start.body">通过 GitHub 仓库管理公开文章，使用 Postly 构建静态 HTML。插件的附件同步和撤回功能仍在开发分支。</p><div class="kit-grid kit-grid--2"><div class="kit-card"><h3 data-i18n="start.cli">Racket CLI</h3><pre><code>raco pkg install https://github.com/turlamai/postly.git
+raco postly build ./site</code></pre><a href="https://github.com/turlamai/postly#readme">GitHub README</a></div><div class="kit-card"><h3 data-i18n="start.plugin">Obsidian 插件</h3><a href="https://github.com/turlamai/obsidian-postly#readme">Obsidian Postly · README</a></div></div></div></section></main>
+<footer class="kit-footer"><div class="kit-container"><a href="https://jrtx.site/" data-i18n="footer.portal">全部产品</a> · <a href="https://github.com/turlamai/postly/blob/main/LICENSE">MIT</a></div></footer><script type="application/json" id="kit-i18n">{"zh":{"nav.brand":"Postly","nav.start":"开始使用","hero.h1":"本地写作，发布到自己的网站。","hero.lead":"将 Markdown 或 Obsidian 笔记构建为静态博客。保留原始文件，主动选择公开内容。","hero.badge":"免费开源 · 开发预览","start.title":"选择你的发布方式","start.cli":"Racket CLI","start.plugin":"Obsidian 插件","start.body":"通过 GitHub 仓库管理公开文章，使用 Postly 构建静态 HTML。插件的附件同步和撤回功能仍在开发分支。","footer.portal":"全部产品"},"en":{"nav.brand":"Postly","nav.start":"Get started","hero.h1":"Write locally. Publish to your own site.","hero.lead":"Build a static blog from Markdown or Obsidian notes. Keep your source files and choose what to publish.","hero.badge":"Free and open source · Development preview","start.title":"Choose your publishing workflow","start.cli":"Racket CLI","start.plugin":"Obsidian plugin","start.body":"Manage public articles in a GitHub repository and build static HTML with Postly. Attachment sync and withdrawal are still in development branches.","footer.portal":"All products"}}</script></body></html>
