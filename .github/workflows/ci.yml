@@ -34,4 +34,9 @@ jobs:
       - name: Tests
         run: raco test test
       - name: Build the example site
-        run: raco postly --out example/_site build example
+        run: |
+          raco postly --out "$RUNNER_TEMP/postly-leading" build example
+          raco postly build example --out "$RUNNER_TEMP/postly-trailing"
+          test -s "$RUNNER_TEMP/postly-leading/index.html"
+          test -s "$RUNNER_TEMP/postly-trailing/static/style.css"
+          diff -r "$RUNNER_TEMP/postly-leading" "$RUNNER_TEMP/postly-trailing"

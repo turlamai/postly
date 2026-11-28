@@ -17,6 +17,6 @@
                      "scribble-lib"))
 
 (define raco-commands
-  '(("postly" postly/main "build or serve a postly blog" #f)))
+  '(("postly" (submod postly/main main) "build or serve a postly blog" #f)))
 
 (define test-omit-paths '("test" "example"))

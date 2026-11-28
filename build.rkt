@@ -82,10 +82,9 @@
                 (page->html (index-page site-cfg posts 10))))
 
   ;; blog index
-  (when (not (null? posts))
-    (write-file* (out-page out-dir "/blog/")
-                 (string->bytes/utf-8
-                  (page->html (blog-index-page site-cfg posts)))))
+  (write-file* (out-page out-dir "/blog/")
+               (string->bytes/utf-8
+                (page->html (blog-index-page site-cfg posts))))
 
   ;; post permalinks
   (for ((d (in-list posts)))
