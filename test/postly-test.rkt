@@ -101,6 +101,7 @@
    (call-with-output-file (build-path asset-source "private.txt")
      (lambda (p) (display "private" p)))
    (build! asset-source asset-output)
+   (check-true (file-exists? (build-path asset-output "blog" "index.html")))
    (check-equal? (file->bytes (build-path asset-output "assets" "article" "image.png"))
                  payload)
    (check-false (file-exists? (build-path asset-output "private.txt")))
